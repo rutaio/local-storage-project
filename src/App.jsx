@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { Navbar } from './components/Navbar/Navbar';
 import { MoviesList } from './components/MoviesList/MoviesList';
+import { FavoriteMoviesList } from './components/FavoriteMoviesList/FavoriteMoviesList';
 import { POPULAR_MOVIES_URL } from './constants/api';
 import { useEffect, useState } from 'react';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -24,9 +26,16 @@ function App() {
 
   // paduodame (filma) kuri norime issaugoti:
   const handleFavoriteMovies = (movie) => {
-    // spread operator - prideda nauja elementa i masyva, taciau islaiko senus viduje:
-    // issaugok filma, bet ir nepamirsk kitu:
-    setFavoriteMovies([movie, ...favoriteMovies]);
+    // .some() - patikrina ar bent vienas elementas atitinka salyga:
+    if (favoriteMovies.some((favMovie) => favMovie.id === movie.id)) {
+      setFavoriteMovies(
+        favoriteMovies.filter((favMovie) => favMovie.id !== movie.id)
+      );
+    } else {
+      // spread operator - prideda nauja elementa i masyva, taciau islaiko senus viduje:
+      // issaugok filma, bet ir nepamirsk kitu:
+      setFavoriteMovies([movie, ...favoriteMovies]);
+    }
   };
 
   // useEffect veikia kai pirma karta yra uzkraunamas puslapis:
@@ -50,6 +59,11 @@ function App() {
         favoriteMovies={favoriteMovies}
         handleButtonClick={handleFavoriteMovies}
       />
+      <FavoriteMoviesList
+        favoriteMovies={favoriteMovies}
+        handleButtonClick={handleFavoriteMovies}
+      />
+      <ToastContainer/>
     </div>
   );
 }
